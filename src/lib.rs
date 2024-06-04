@@ -191,41 +191,40 @@ impl SteamworksPlugin {
 
 impl Plugin for SteamworksPlugin {
     fn build(&self, app: &mut App) {
-        let (client, single) = self
-            .steam
-            .lock()
-            .unwrap()
-            .take()
-            .expect("The SteamworksPlugin was initialized more than once");
+        let steam = self.steam.lock().unwrap().take();
 
-        app.insert_resource(Client(client.clone()))
-            .insert_resource(SingleClient(SyncCell::new(single)))
-            .insert_resource(register_event_callbacks!(
-                client,
-                AuthSessionTicketResponse,
-                DownloadItemResult,
-                GameLobbyJoinRequested,
-                LobbyChatUpdate,
-                P2PSessionConnectFail,
-                P2PSessionRequest,
-                PersonaStateChange,
-                SteamServerConnectFailure,
-                SteamServersConnected,
-                SteamServersDisconnected,
-                TicketForWebApiResponse,
-                UserAchievementStored,
-                UserStatsReceived,
-                UserStatsStored,
-                ValidateAuthTicketResponse
-            ))
-            .add_event::<SteamworksEvent>()
-            .configure_sets(First, SteamworksSystem::RunCallbacks)
-            .add_systems(
-                First,
-                run_steam_callbacks
-                    .in_set(SteamworksSystem::RunCallbacks)
-                    .before(bevy_ecs::event::EventUpdates),
-            );
+        if let Some((client, single)) = steam {
+            app.insert_resource(Client(client.clone()))
+                .insert_resource(SingleClient(SyncCell::new(single)))
+                .insert_resource(register_event_callbacks!(
+                    client,
+                    AuthSessionTicketResponse,
+                    DownloadItemResult,
+                    GameLobbyJoinRequested,
+                    LobbyChatUpdate,
+                    P2PSessionConnectFail,
+                    P2PSessionRequest,
+                    PersonaStateChange,
+                    SteamServerConnectFailure,
+                    SteamServersConnected,
+                    SteamServersDisconnected,
+                    TicketForWebApiResponse,
+                    UserAchievementStored,
+                    UserStatsReceived,
+                    UserStatsStored,
+                    ValidateAuthTicketResponse
+                ))
+                .add_event::<SteamworksEvent>()
+                .configure_sets(First, SteamworksSystem::RunCallbacks)
+                .add_systems(
+                    First,
+                    run_steam_callbacks
+                        .in_set(SteamworksSystem::RunCallbacks)
+                        .before(bevy_ecs::event::EventUpdates),
+                );
+        } else {
+            eprintln!("Steam is not running or failed to initialize.");
+        }
     }
 }
 

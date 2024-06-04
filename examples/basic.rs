@@ -13,11 +13,16 @@ fn steam_system(steam_client: Res<Client>) {
 }
 
 fn main() {
-    // Use the demo Steam AppId for SpaceWar
+   let steamworks_plugin = match SteamworksPlugin::init_app(480) {
+        Ok(plugin) => plugin,
+        Err(err) => {
+            eprintln!("Failed to initialize Steam: {}", err);
+            return;
+        }
+    };
+
     App::new()
-        // it is important to add the plugin before `RenderPlugin` that comes with `DefaultPlugins`
-        .add_plugins(SteamworksPlugin::init_app(480).unwrap())
+        .add_plugins(steamworks_plugin)
         .add_plugins(DefaultPlugins)
-        .add_systems(Startup, steam_system)
-        .run()
+        .run();
 }

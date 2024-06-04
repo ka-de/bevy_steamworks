@@ -8,6 +8,7 @@ This crate provides a [Bevy](https://bevyengine.org/) plugin for integrating wit
 the Steamworks SDK.
 
 ## Installation
+
 Add the following to your `Cargo.toml`:
 
 ```toml
@@ -76,7 +77,7 @@ fn main() {
 ```
 
 ## Bevy Version Supported
- 
+
 |Bevy Version |bevy\_steamworks|
 |:------------|:---------------|
 |0.13         |0.10, 0.11      |

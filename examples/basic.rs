@@ -13,10 +13,10 @@ fn steam_system(steam_client: Res<Client>) {
 }
 
 fn main() {
-   let steamworks_plugin = match SteamworksPlugin::init_app(480) {
+   let steamworks_plugin = match SteamworksPlugin::init_app(981370) {
         Ok(plugin) => plugin,
         Err(err) => {
-            eprintln!("Failed to initialize Steam: {}", err);
+            eprintln!("{}", err);
             return;
         }
     };
@@ -24,5 +24,6 @@ fn main() {
     App::new()
         .add_plugins(steamworks_plugin)
         .add_plugins(DefaultPlugins)
+		.add_systems(Startup, steam_system)
         .run();
 }
